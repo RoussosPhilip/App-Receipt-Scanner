@@ -35,7 +35,7 @@ fun FuelRecordItem(record: FuelRecord) {
                 modifier = Modifier
                     .size(48.dp)
                     .background(
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         shape = RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center

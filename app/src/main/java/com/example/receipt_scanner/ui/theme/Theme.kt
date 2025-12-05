@@ -66,7 +66,8 @@ private val DarkColorScheme = darkColorScheme(
     onError = Neutral10,
 
     outline = Neutral40,
-    outlineVariant = Neutral30
+    outlineVariant = Neutral30,
+
 )
 
 @Composable

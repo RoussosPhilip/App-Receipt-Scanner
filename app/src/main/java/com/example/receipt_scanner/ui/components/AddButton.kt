@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +22,8 @@ fun AddButton(
         onClick = onClick,
         modifier = modifier.size(56.dp),
         shape = RoundedCornerShape(16.dp),
-        containerColor = Color.Black,
-        contentColor = Color.White
+        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentColor = MaterialTheme.colorScheme.background
     ) {
         Icon(
             imageVector = Icons.Default.Add,

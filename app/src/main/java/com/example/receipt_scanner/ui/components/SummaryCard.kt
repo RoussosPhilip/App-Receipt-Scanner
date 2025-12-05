@@ -22,7 +22,7 @@ fun SummaryCard(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Black),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onTertiaryContainer),
         shape = RoundedCornerShape(28.dp)
     ) {
         Column(
@@ -33,18 +33,18 @@ fun SummaryCard(
         ) {
             Text(
                 text = "Total Amount",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
                 text = String.format("%.2f €", totalAmount),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Total Liters: %.1f L".format(totalLiters),
-                color = Color.White.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.background,
                 style = MaterialTheme.typography.bodyMedium
             )
         }

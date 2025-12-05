@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,24 +36,24 @@ fun CustomMenuButton(
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(Color.Black, shape = RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.onTertiaryContainer, shape = RoundedCornerShape(3.dp))
                     )
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(Color.Black, shape = RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.onTertiaryContainer, shape = RoundedCornerShape(3.dp))
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(Color.Black, shape = RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.onTertiaryContainer, shape = RoundedCornerShape(3.dp))
                     )
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(Color.Black, shape = RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.onTertiaryContainer, shape = RoundedCornerShape(3.dp))
                     )
                 }
             }
