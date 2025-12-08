@@ -30,7 +30,8 @@ import com.example.receipt_scanner.ui.components.SummaryCard
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    onNavigateToManualEntry: () -> Unit = {}
+    onNavigateToManualEntry: () -> Unit = {},
+    onNavigateToHistory: () -> Unit  ={}
 ) {
     // Demo data (in the future will come from ViewModel)
     val records = listOf(
@@ -105,6 +106,7 @@ fun DashboardScreen(
                     FilledTonalButton(
                         onClick = {
                             println("View All clicked!")
+                            onNavigateToHistory()
                         },
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant,
