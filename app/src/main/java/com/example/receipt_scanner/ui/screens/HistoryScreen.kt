@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,6 +40,34 @@ fun HistoryScreen(
     val database = remember { AppDataBase.getDataBase(context) }
     val dao = database.fuelRecordDao()
     val records by dao.getAllRecords().collectAsState(initial = emptyList())
+
+    val groupedRecords = remember(records) {
+        records.groupBy { record ->
+            try {
+                val parts = record.date.split("-")
+                val year = parts[0]
+                val month = when(parts[1]) {
+                    "01" -> "Jan"
+                    "02" -> "Feb"
+                    "03" -> "Mar"
+                    "04" -> "Apr"
+                    "05" -> "May"
+                    "06" -> "Jun"
+                    "07" -> "Jul"
+                    "08" -> "Aug"
+                    "09" -> "Sep"
+                    "10" -> "Oct"
+                    "11" -> "Nov"
+                    "12" -> "Dec"
+                    else -> parts[1]
+                }
+                "$month $year"  // "Dec 2025"
+            } catch (e: Exception) {
+                "Unknown"
+            }
+        }
+    }
+
 
     Scaffold(
         modifier = modifier,
@@ -77,11 +106,32 @@ fun HistoryScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(records) { record ->
-                        FuelRecordItem(record = record)
-                        Spacer(modifier = Modifier.height(8.dp))
+                    groupedRecords.forEach { (month, recordsInMonth) ->
+                        item {
+                            Text(
+                                text = month,
+                                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            )
+                        }
+
+                        items(recordsInMonth) { record ->
+                            FuelRecordItem(record = record)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+//                        item {
+//                            HorizontalDivider(
+//                                modifier = Modifier.padding(vertical = 16.dp),
+//                                thickness = 1.dp,
+//                                color = MaterialTheme.colorScheme.outlineVariant
+//                            )
+//                        }
                     }
                 }
+
 
             }
 

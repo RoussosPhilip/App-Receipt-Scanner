@@ -10,15 +10,31 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.receipt_scanner.data.FuelRecord
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun FuelRecordItem(record: FuelRecord) {
+
+    val displayDate = remember(record.date) {
+        try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val date = inputFormat.parse(record.date)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            record.date
+        }
+    }
+
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
@@ -51,8 +67,9 @@ fun FuelRecordItem(record: FuelRecord) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
+
                 Text(
-                    text = "${record.date} • ${record.liters} L",
+                    text = "$displayDate • ${record.liters} L",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )

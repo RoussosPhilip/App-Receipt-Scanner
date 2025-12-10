@@ -23,8 +23,8 @@ import com.example.receipt_scanner.ui.components.DatePickerDialog
 import com.example.receipt_scanner.ui.components.ChevronLeft
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
-
-
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +47,22 @@ fun ManualEntryScreen(
     val scope = rememberCoroutineScope()
 
     val dateInteractionSource = remember { MutableInteractionSource() }
+
+    val displayDate = remember(date) {
+        if (date.isNotEmpty()) {
+            try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                val parsedDate = inputFormat.parse(date)
+                outputFormat.format(parsedDate!!)
+            } catch (e: Exception) {
+                date
+            }
+        } else {
+            ""
+        }
+    }
+
 
     LaunchedEffect(dateInteractionSource) {
         dateInteractionSource.interactions.collect { interaction ->
@@ -104,7 +120,7 @@ fun ManualEntryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = date,
+                    value = displayDate,
                     onValueChange = { },
                     label = { Text("Date") },
                     readOnly = true,

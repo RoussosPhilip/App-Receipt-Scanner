@@ -20,7 +20,7 @@ fun DatePickerDialog(
         confirmButton = {
             TextButton(onClick = {
                 datePickerState.selectedDateMillis?.let { millis ->
-                    val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val dateString = formatter.format(Date(millis))
                     onDateSelected(dateString)
                 }

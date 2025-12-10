@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
@@ -27,7 +28,9 @@ import com.example.receipt_scanner.ui.components.FuelRecordItem
 import com.example.receipt_scanner.ui.components.SummaryCard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import com.example.receipt_scanner.data.AppDataBase
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -47,6 +50,8 @@ fun DashboardScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val totalAmount = records.sumOf { it.amount }
     val totalLiters = records.sumOf { it.liters }
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier,
@@ -86,6 +91,16 @@ fun DashboardScreen(
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 25.sp),
                         fontWeight = FontWeight.Bold
                     )
+
+                    //For testing
+//                    Button(onClick = {
+//                        scope.launch {
+//                            dao.deleteAll()
+//                            println("All records deleted")
+//                        }
+//                    }) {
+//                        Text("Clear All")
+//                    }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
