@@ -20,12 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.receipt_scanner.data.FuelRecord
 import com.example.receipt_scanner.ui.components.AddButton
 import com.example.receipt_scanner.ui.components.AddReceiptBottomSheet
 import com.example.receipt_scanner.ui.components.CustomMenuButton
 import com.example.receipt_scanner.ui.components.FuelRecordItem
 import com.example.receipt_scanner.ui.components.SummaryCard
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import com.example.receipt_scanner.data.AppDataBase
+
 
 @Composable
 fun DashboardScreen(
@@ -33,12 +36,13 @@ fun DashboardScreen(
     onNavigateToManualEntry: () -> Unit = {},
     onNavigateToHistory: () -> Unit  ={}
 ) {
-    // Demo data (in the future will come from ViewModel)
-    val records = listOf(
-        FuelRecord("Shell - Kifisias", "27 Nov", 20.0, 39.5),
-        FuelRecord("BP - Attica Road", "23 Nov", 35.0, 70.0),
-        FuelRecord("Eko - Piraeus", "18 Nov", 15.0, 28.2)
-    )
+
+    val context = LocalContext.current
+    val database = remember { AppDataBase.getDataBase(context) }
+    val dao = database.fuelRecordDao()
+
+    val records by dao.getAllRecords().collectAsState(initial = emptyList())
+
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val totalAmount = records.sumOf { it.amount }

@@ -16,21 +16,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.receipt_scanner.data.FuelRecord
 import com.example.receipt_scanner.ui.components.ChevronLeft
 import com.example.receipt_scanner.ui.components.FuelRecordItem
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.receipt_scanner.data.AppDataBase
+
 
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
-    records: List<FuelRecord>
 ){
+    val context = LocalContext.current
+    val database = remember { AppDataBase.getDataBase(context) }
+    val dao = database.fuelRecordDao()
+    val records by dao.getAllRecords().collectAsState(initial = emptyList())
 
     Scaffold(
         modifier = modifier,

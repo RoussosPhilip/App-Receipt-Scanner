@@ -13,12 +13,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.receipt_scanner.data.AppDataBase
 import com.example.receipt_scanner.ui.components.DatePickerDialog
 import com.example.receipt_scanner.ui.components.ChevronLeft
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+
 
 
 
@@ -35,6 +40,11 @@ fun ManualEntryScreen(
     var amount by remember { mutableStateOf("") }
 
     var showDatePicker by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val database = remember { AppDataBase.getDataBase(context) }
+    val dao = database.fuelRecordDao()
+    val scope = rememberCoroutineScope()
 
     val dateInteractionSource = remember { MutableInteractionSource() }
 
@@ -140,13 +150,29 @@ fun ManualEntryScreen(
                         val litersDouble = liters.toDoubleOrNull() ?: 0.0
                         val amountDouble = amount.toDoubleOrNull() ?: 0.0
 
-                        onSaveReceipt(stationName, date, litersDouble, amountDouble)
+                        val record = com.example.receipt_scanner.data.FuelRecord(
+                            stationName = stationName,
+                            date = date,
+                            liters = litersDouble,
+                            amount = amountDouble
+                        )
+
+                        scope.launch {
+                            dao.insert(record)
+                            println("Saved to database: $record")
+                        }
+
+                        onNavigateBack()
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = stationName.isNotBlank() && liters.isNotBlank() && amount.isNotBlank()
+                    enabled = stationName.isNotBlank() &&
+                            date.isNotBlank() &&
+                            liters.isNotBlank() &&
+                            amount.isNotBlank()
                 ) {
                     Text("Save")
                 }
+
             }
         }
     }
