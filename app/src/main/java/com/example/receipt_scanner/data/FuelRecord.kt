@@ -9,6 +9,7 @@ data class FuelRecord(
     val id: Int = 0,
     val stationName: String,
     val date: String,
+    val time: String = "",
     val liters: Double,
     val amount: Double
 )

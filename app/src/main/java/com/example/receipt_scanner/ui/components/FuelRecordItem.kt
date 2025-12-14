@@ -1,9 +1,7 @@
 package com.example.receipt_scanner.ui.components
 
-import android.text.style.BackgroundColorSpan
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,7 +67,7 @@ fun FuelRecordItem(record: FuelRecord) {
                 )
 
                 Text(
-                    text = "$displayDate • ${record.liters} L",
+                    text = "$displayDate • ${record.time} • ${record.liters} L",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )

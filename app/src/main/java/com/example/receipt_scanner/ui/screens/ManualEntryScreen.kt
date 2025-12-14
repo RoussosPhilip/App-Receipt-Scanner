@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.receipt_scanner.data.AppDataBase
 import com.example.receipt_scanner.ui.components.DatePickerDialog
+import com.example.receipt_scanner.ui.components.TimePickerDialog
 import com.example.receipt_scanner.ui.components.ChevronLeft
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
@@ -36,10 +37,16 @@ fun ManualEntryScreen(
 ) {
     var stationName by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
     var liters by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
+    var unitPrice by remember { mutableStateOf("") }
+    var fuelType by remember { mutableStateOf("") }
+
+    var unitPriceManuallyEdited by remember { mutableStateOf(false) }
 
     var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val database = remember { AppDataBase.getDataBase(context) }
@@ -47,6 +54,7 @@ fun ManualEntryScreen(
     val scope = rememberCoroutineScope()
 
     val dateInteractionSource = remember { MutableInteractionSource() }
+    val timeInteractionSource = remember { MutableInteractionSource() }
 
     val displayDate = remember(date) {
         if (date.isNotEmpty()) {
@@ -68,6 +76,26 @@ fun ManualEntryScreen(
         dateInteractionSource.interactions.collect { interaction ->
             if (interaction is PressInteraction.Release) {
                 showDatePicker = true
+            }
+        }
+    }
+
+    LaunchedEffect(timeInteractionSource) {
+        timeInteractionSource.interactions.collect { interaction ->
+            if (interaction is PressInteraction.Release){
+                showTimePicker = true
+            }
+        }
+    }
+
+    LaunchedEffect(amount, liters) {
+        if (!unitPriceManuallyEdited) {
+            val amountDouble = amount.toDoubleOrNull()
+            val litersDouble = liters.toDoubleOrNull()
+            if (amountDouble != null && litersDouble != null && litersDouble > 0) {
+                unitPrice = String.format("%.3f", amountDouble / litersDouble)
+            } else if (amount.isEmpty() || liters.isEmpty()) {
+                unitPrice = ""
             }
         }
     }
@@ -140,8 +168,23 @@ fun ManualEntryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
+                    value = time,
+                    onValueChange = {},
+                    label = {Text("Time")},
+                    readOnly = true,
+                    interactionSource = timeInteractionSource,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
                     value = liters,
-                    onValueChange = { liters = it },
+                    onValueChange = {
+                        liters = it
+                        unitPriceManuallyEdited = false
+                    },
                     label = { Text("Liters") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
@@ -152,8 +195,31 @@ fun ManualEntryScreen(
 
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = {
+                        amount = it
+                        unitPriceManuallyEdited = false
+                    },
                     label = { Text("Total Amount") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = unitPrice,
+                    onValueChange = {
+                        unitPrice = it
+                        unitPriceManuallyEdited = true
+
+                        val priceDouble = it.toDoubleOrNull()
+                        val litersDouble = liters.toDoubleOrNull()
+                        if (priceDouble != null && litersDouble != null && litersDouble > 0) {
+                            amount = String.format("%.2f", priceDouble * litersDouble)
+                        }
+                    },
+                    label = { Text("Price per Liter (€/L)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
@@ -169,6 +235,7 @@ fun ManualEntryScreen(
                         val record = com.example.receipt_scanner.data.FuelRecord(
                             stationName = stationName,
                             date = date,
+                            time = time,
                             liters = litersDouble,
                             amount = amountDouble
                         )
@@ -183,6 +250,7 @@ fun ManualEntryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = stationName.isNotBlank() &&
                             date.isNotBlank() &&
+                            time.isNotBlank() &&
                             liters.isNotBlank() &&
                             amount.isNotBlank()
                 ) {
@@ -200,6 +268,16 @@ fun ManualEntryScreen(
                 showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
+        )
+    }
+
+    if (showTimePicker) {
+        TimePickerDialog(
+            onConfirm = { selectedTime ->
+                time = selectedTime
+                showTimePicker = false
+            },
+            onDismiss = {showTimePicker = false}
         )
     }
 }
