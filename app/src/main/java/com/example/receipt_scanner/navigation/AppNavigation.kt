@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.receipt_scanner.ui.screens.DashboardScreen
 import com.example.receipt_scanner.ui.screens.HistoryScreen
 import com.example.receipt_scanner.ui.screens.ManualEntryScreen
+import com.example.receipt_scanner.ui.screens.ScannerScreen
 
 @Composable
 fun AppNavigation() {
@@ -22,6 +23,10 @@ fun AppNavigation() {
                     navController.navigate("manual_entry")
                 },
 
+                onNavigateToScanner = {
+                    navController.navigate("scanner")
+                },
+
                 onNavigateToHistory = {
                     navController.navigate("history")
                 }
@@ -34,6 +39,16 @@ fun AppNavigation() {
 
                 onSaveReceipt = { stationName, date, liters, amount ->
                     println("Saved: $stationName, $date, $liters, $amount")
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("scanner") {
+            ScannerScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onScanComplete = { uri ->
+                    println("Scanned image: $uri")
                     navController.popBackStack()
                 }
             )

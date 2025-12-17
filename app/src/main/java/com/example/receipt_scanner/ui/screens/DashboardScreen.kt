@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onNavigateToManualEntry: () -> Unit = {},
+    onNavigateToScanner: () -> Unit = {},
     onNavigateToHistory: () -> Unit  ={}
 ) {
 
@@ -163,6 +164,8 @@ fun DashboardScreen(
         showSheet = showBottomSheet,
         onDismiss = { showBottomSheet = false },
         onScanClick = {
+            showBottomSheet = false
+            onNavigateToScanner()
             println("Open Camera!")
         },
         onManualClick = {
