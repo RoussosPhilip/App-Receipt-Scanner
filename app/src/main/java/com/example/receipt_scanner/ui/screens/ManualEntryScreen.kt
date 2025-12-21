@@ -27,6 +27,14 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+enum class EditedField { NONE, LITERS, AMOUNT, UNIT_PRICE }
+
+private fun parseNumber(input: String): Double?{
+    if (input.isEmpty()) return null
+    val normalized = input.replace(",",".")
+    return normalized.toDoubleOrNull()
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,8 +51,6 @@ fun ManualEntryScreen(
     var unitPrice by remember { mutableStateOf("") }
     var fuelType by remember { mutableStateOf("") }
 
-    var unitPriceManuallyEdited by remember { mutableStateOf(false) }
-
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
@@ -55,6 +61,9 @@ fun ManualEntryScreen(
 
     val dateInteractionSource = remember { MutableInteractionSource() }
     val timeInteractionSource = remember { MutableInteractionSource() }
+
+    var lastEdited by remember { mutableStateOf(EditedField.NONE) }
+
 
     val displayDate = remember(date) {
         if (date.isNotEmpty()) {
@@ -88,16 +97,42 @@ fun ManualEntryScreen(
         }
     }
 
-    LaunchedEffect(amount, liters) {
-        if (!unitPriceManuallyEdited) {
-            val amountDouble = amount.toDoubleOrNull()
-            val litersDouble = liters.toDoubleOrNull()
-            if (amountDouble != null && litersDouble != null && litersDouble > 0) {
-                unitPrice = String.format("%.3f", amountDouble / litersDouble)
-            } else if (amount.isEmpty() || liters.isEmpty()) {
+    LaunchedEffect(liters, amount, unitPrice, lastEdited) {
+        val litersVal = parseNumber(liters)
+        val amountVal = parseNumber(amount)
+        val unitVal = parseNumber(unitPrice)
+
+        when (lastEdited) {
+            EditedField.LITERS -> {
+                if (litersVal != null && litersVal > 0 && amountVal != null) {
+                    unitPrice = String.format("%.3f", amountVal / litersVal)
+                } else if (litersVal != null && litersVal > 0 && unitVal != null) {
+                    amount = String.format("%.2f", unitVal * litersVal)
+                }
+            }
+            EditedField.AMOUNT -> {
+                if (amountVal != null && unitVal != null && unitVal > 0) {
+                    liters = String.format("%.3f", amountVal / unitVal)
+                } else if (litersVal != null && litersVal > 0 && amountVal != null) {
+                    unitPrice = String.format("%.3f", amountVal / litersVal)
+                }
+            }
+            EditedField.UNIT_PRICE -> {
+                if (amountVal != null && unitVal != null && unitVal > 0) {
+                    liters = String.format("%.3f", amountVal / unitVal)
+                } else if (litersVal != null && litersVal > 0 && unitVal != null) {
+                    amount = String.format("%.2f", unitVal * litersVal)
+                }
+            }
+            EditedField.NONE -> Unit
+        }
+
+        if (liters.isBlank() || amount.isBlank()) {
+            if (lastEdited != EditedField.UNIT_PRICE) {
                 unitPrice = ""
             }
         }
+
     }
 
     Scaffold(
@@ -180,46 +215,40 @@ fun ManualEntryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = liters,
-                    onValueChange = {
-                        liters = it
-                        unitPriceManuallyEdited = false
-                    },
-                    label = { Text("Liters") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(15.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
                     value = amount,
                     onValueChange = {
                         amount = it
-                        unitPriceManuallyEdited = false
+                        lastEdited = EditedField.AMOUNT
                     },
-                    label = { Text("Total Amount") },
+                    label = { Text("Total Amount (€)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
                 OutlinedTextField(
                     value = unitPrice,
                     onValueChange = {
                         unitPrice = it
-                        unitPriceManuallyEdited = true
-
-                        val priceDouble = it.toDoubleOrNull()
-                        val litersDouble = liters.toDoubleOrNull()
-                        if (priceDouble != null && litersDouble != null && litersDouble > 0) {
-                            amount = String.format("%.2f", priceDouble * litersDouble)
-                        }
+                        lastEdited = EditedField.UNIT_PRICE
                     },
                     label = { Text("Price per Liter (€/L)") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = liters,
+                    onValueChange = {
+                        liters = it
+                        lastEdited = EditedField.LITERS
+                    },
+                    label = { Text("Liters") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
@@ -229,8 +258,8 @@ fun ManualEntryScreen(
 
                 Button(
                     onClick = {
-                        val litersDouble = liters.toDoubleOrNull() ?: 0.0
-                        val amountDouble = amount.toDoubleOrNull() ?: 0.0
+                        val litersDouble = parseNumber(liters) ?: 0.0
+                        val amountDouble = parseNumber(amount) ?: 0.0
 
                         val record = com.example.receipt_scanner.data.FuelRecord(
                             stationName = stationName,
