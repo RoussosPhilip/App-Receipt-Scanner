@@ -22,7 +22,7 @@ fun SummaryCard(
             .fillMaxWidth()
             .height(140.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimaryContainer),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier

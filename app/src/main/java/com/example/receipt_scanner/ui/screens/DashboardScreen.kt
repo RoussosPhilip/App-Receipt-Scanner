@@ -1,7 +1,6 @@
 package com.example.receipt_scanner.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -30,7 +29,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.receipt_scanner.data.AppDataBase
-import kotlinx.coroutines.launch
+import com.example.receipt_scanner.ui.components.StatisticsCard
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.text.format
+import androidx.compose.foundation.lazy.LazyRow
+import com.example.receipt_scanner.ui.components.DashboardStat
 
 
 @Composable
@@ -51,6 +55,48 @@ fun DashboardScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val totalAmount = records.sumOf { it.amount }
     val totalLiters = records.sumOf { it.liters }
+
+    val formatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
+    val today = remember { LocalDate.now() }
+    val monthAgo = remember { today.minusDays(30) }
+
+    val lastMonthRecords = remember(records) {
+        records.filter { record ->
+            try {
+                val d = LocalDate.parse(record.date, formatter)
+                !d.isBefore(monthAgo) && !d.isAfter(today)
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    val lastMonthLiters = lastMonthRecords.sumOf { it.liters }
+    val lastMonthAmount = lastMonthRecords.sumOf { it.amount }
+
+    val avgPriceOverall =
+        if (totalLiters > 0.0) totalAmount / totalLiters else 0.0
+
+    val stats = listOf(
+        DashboardStat(
+            title = "Liters (30 days)",
+            value = String.format("%.1f L", lastMonthLiters),
+//            subtitle = "Last 30 days"
+        ),
+        DashboardStat(
+            title = "Cost (30 days)",
+            value = String.format("€%.2f", lastMonthAmount),
+//            subtitle = "Last 30 days"
+        ),
+        DashboardStat(
+            title = "Avg price (Overall)",
+            value = if (avgPriceOverall > 0.0)
+                String.format("€%.3f/L", avgPriceOverall)
+            else
+                "—",
+//            subtitle = "Overall"
+        )
+    )
 
     val scope = rememberCoroutineScope()
 
@@ -75,7 +121,7 @@ fun DashboardScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(20.dp)
+                    .padding(12.dp)
             ) {
 //                Spacer(modifier = Modifier.height(20.dp))
 
@@ -83,15 +129,17 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CustomMenuButton(onClick = {
-                        // Will do something
-                    })
-
                     Text(
                         text = "Dashboard",
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 25.sp),
                         fontWeight = FontWeight.Bold
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    CustomMenuButton(onClick = {
+                        // Will do something
+                    })
 
                     //For testing
 //                    Button(onClick = {
@@ -110,6 +158,23 @@ fun DashboardScreen(
                     totalAmount = totalAmount,
                     totalLiters = totalLiters
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Statistics",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                )  {
+                    items(stats){ stat ->
+                        StatisticsCard(stat = stat)
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -150,10 +215,20 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(records) { record ->
-                        FuelRecordItem(record = record)
-                        Spacer(modifier = Modifier.height(8.dp))
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    val itemHeight = 80.dp + 8.dp
+                    val availableHeight = maxHeight
+                    val itemsToShow = (availableHeight / itemHeight).toInt()
+
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        records.take(itemsToShow).forEach { record ->
+                            FuelRecordItem(record = record)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
             }

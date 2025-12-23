@@ -32,11 +32,13 @@ fun FuelRecordItem(record: FuelRecord) {
         }
     }
 
-
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0x2FDADADA)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0x2FDADADA)
         )
     ) {
         Row(

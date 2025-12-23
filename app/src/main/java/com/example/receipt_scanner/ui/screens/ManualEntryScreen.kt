@@ -35,7 +35,6 @@ private fun parseNumber(input: String): Double?{
     return normalized.toDoubleOrNull()
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManualEntryScreen(
