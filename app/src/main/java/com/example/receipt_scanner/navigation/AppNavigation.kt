@@ -1,5 +1,7 @@
 package com.example.receipt_scanner.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,7 +20,9 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "dashboard"
+        startDestination = "dashboard",
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ){
         composable("dashboard") {
             DashboardScreen(
