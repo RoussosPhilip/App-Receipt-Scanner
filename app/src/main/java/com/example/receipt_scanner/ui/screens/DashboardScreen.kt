@@ -42,7 +42,8 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     onNavigateToManualEntry: () -> Unit = {},
     onNavigateToScanner: () -> Unit = {},
-    onNavigateToHistory: () -> Unit  ={}
+    onNavigateToHistory: () -> Unit  ={},
+    onNavigateToRecordDetail: (Int) -> Unit ={}
 ) {
 
     val context = LocalContext.current
@@ -226,7 +227,12 @@ fun DashboardScreen(
 
                     Column(modifier = Modifier.fillMaxWidth()) {
                         records.take(itemsToShow).forEach { record ->
-                            FuelRecordItem(record = record)
+                            FuelRecordItem(
+                                record = record,
+                                onClick = {
+                                    onNavigateToRecordDetail(record.id)
+                                }
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }

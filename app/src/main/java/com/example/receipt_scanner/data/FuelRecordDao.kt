@@ -14,6 +14,9 @@ interface FuelRecordDao{
     @Query("SELECT * FROM fuel_records ORDER BY date DESC")
     fun getAllRecords(): Flow<List<FuelRecord>>
 
+    @Query("SELECT * FROM fuel_records WHERE id = :id")
+    fun getRecordById(id: Int): Flow<FuelRecord?>
+
     @Delete
     suspend fun delete(record: FuelRecord)
 

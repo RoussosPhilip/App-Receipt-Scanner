@@ -34,6 +34,7 @@ import com.example.receipt_scanner.data.AppDataBase
 fun HistoryScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
+    onNavigateToRecordDetail: (Int) -> Unit,
 ){
     val context = LocalContext.current
     val database = remember { AppDataBase.getDataBase(context) }
@@ -117,7 +118,12 @@ fun HistoryScreen(
                         }
 
                         items(recordsInMonth) { record ->
-                            FuelRecordItem(record = record)
+                            FuelRecordItem(
+                                record = record,
+                                onClick = {
+                                    onNavigateToRecordDetail(record.id)
+                                }
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
 

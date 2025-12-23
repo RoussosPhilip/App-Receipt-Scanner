@@ -1,6 +1,7 @@
 package com.example.receipt_scanner.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -19,7 +20,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun FuelRecordItem(record: FuelRecord) {
+fun FuelRecordItem(
+    record: FuelRecord,
+    onClick: () -> Unit = {}
+) {
 
     val displayDate = remember(record.date) {
         try {
@@ -35,10 +39,11 @@ fun FuelRecordItem(record: FuelRecord) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp),
+            .height(80.dp)
+            .clickable{ onClick() },
+
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0x2FDADADA)
+        colors = CardDefaults.cardColors(containerColor = Color(0x2FDADADA)
         )
     ) {
         Row(
