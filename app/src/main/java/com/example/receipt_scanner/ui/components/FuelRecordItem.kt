@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,14 +37,17 @@ fun FuelRecordItem(
         }
     }
 
+    val shape = RoundedCornerShape(16.dp)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable{ onClick() },
-
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0x2FDADADA)
+            .clip(shape)
+            .clickable { onClick() },
+        shape = shape,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0x2FDADADA)
         )
     ) {
         Row(
@@ -60,6 +64,7 @@ fun FuelRecordItem(
                         shape = RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center
+
             ) {
                 // gas station icon
             }
