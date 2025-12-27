@@ -25,6 +25,7 @@ import com.example.receipt_scanner.ui.components.ChevronLeft
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 enum class EditedField { NONE, LITERS, AMOUNT, UNIT_PRICE }
@@ -42,13 +43,18 @@ fun ManualEntryScreen(
     onNavigateBack: () -> Unit,
     onSaveReceipt: (String, String, Double, Double) -> Unit
 ) {
+    val calendar = Calendar.getInstance()
+    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+    val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
+
     var stationName by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf(currentDate) }
+    var time by remember { mutableStateOf(currentTime) }
     var liters by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var unitPrice by remember { mutableStateOf("") }
     var fuelType by remember { mutableStateOf("") }
+    var odometer by remember { mutableStateOf("") }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -149,7 +155,6 @@ fun ManualEntryScreen(
                     .padding(20.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-//                Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,45 +176,57 @@ fun ManualEntryScreen(
 
                 Spacer(modifier = Modifier.height(22.dp))
 
+//                OutlinedTextField(
+//                    value = stationName,
+//                    onValueChange = { stationName = it },
+//                    label = { Text("Station Name") },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    shape = RoundedCornerShape(15.dp)
+//                )
+
                 OutlinedTextField(
-                    value = stationName,
-                    onValueChange = { stationName = it },
-                    label = { Text("Station Name") },
+                    value = odometer,
+                    onValueChange = { odometer = it },
+                    label = {Text("Odometer")},
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
-                    value = displayDate,
-                    onValueChange = { },
-                    label = { Text("Date") },
-                    readOnly = true,
-                    interactionSource = dateInteractionSource,
-                    trailingIcon = {
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select date"
-                            )
-                        }
-                    },
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(15.dp)
-                )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = displayDate,
+                        onValueChange = { },
+                        label = { Text("Date") },
+                        readOnly = true,
+                        interactionSource = dateInteractionSource,
+                        trailingIcon = {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = "Select date"
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(15.dp)
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = time,
-                    onValueChange = {},
-                    label = {Text("Time")},
-                    readOnly = true,
-                    interactionSource = timeInteractionSource,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(15.dp)
-                )
+                    OutlinedTextField(
+                        value = time,
+                        onValueChange = {},
+                        label = {Text("Time")},
+                        readOnly = true,
+                        interactionSource = timeInteractionSource,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
