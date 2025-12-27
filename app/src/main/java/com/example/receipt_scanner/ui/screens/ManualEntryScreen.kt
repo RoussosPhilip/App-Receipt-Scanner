@@ -9,6 +9,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import com.example.receipt_scanner.ui.components.DatePickerDialog
 import com.example.receipt_scanner.ui.components.TimePickerDialog
 import com.example.receipt_scanner.ui.components.ChevronLeft
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -269,6 +272,78 @@ fun ManualEntryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
                 )
+
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    text = "Select Gas Station",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 19.sp),
+                )
+
+                Spacer(Modifier.height(9.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedCard(
+                        onClick = { /* add in the future */ },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(90.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Map",
+                                modifier = Modifier.size(35.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = "Choose on map",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    OutlinedCard(
+                        onClick = { /* add in the future */ },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(90.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Favorite",
+                                modifier = Modifier.size(35.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = "Favorite",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
