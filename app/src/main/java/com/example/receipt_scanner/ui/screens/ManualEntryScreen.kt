@@ -26,6 +26,7 @@ import com.example.receipt_scanner.ui.components.TimePickerDialog
 import com.example.receipt_scanner.ui.components.ChevronLeft
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.text.style.TextAlign
+import com.mapbox.maps.extension.style.style
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -44,7 +45,9 @@ private fun parseNumber(input: String): Double?{
 fun ManualEntryScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
-    onSaveReceipt: (String, String, Double, Double) -> Unit
+    onSaveReceipt: (String, String, Double, Double) -> Unit,
+    onNavigateToFavoritesStation: () -> Unit,
+    onNavigateToMap: () -> Unit
 ) {
     val calendar = Calendar.getInstance()
     val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
@@ -176,6 +179,77 @@ fun ManualEntryScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    text = "Select Gas Station",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 19.sp)
+                )
+
+                Spacer(Modifier.height(9.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedCard(
+                        onClick = { onNavigateToMap()},
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(95.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Map",
+                                modifier = Modifier.size(35.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = "Choose on map",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    OutlinedCard(
+                        onClick = { onNavigateToFavoritesStation() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(95.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Favorite",
+                                modifier = Modifier.size(35.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = "Choose from favorites",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(22.dp))
 
@@ -186,6 +260,14 @@ fun ManualEntryScreen(
 //                    modifier = Modifier.fillMaxWidth(),
 //                    shape = RoundedCornerShape(15.dp)
 //                )
+
+                Text(
+                    text = "More Information",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 19.sp),
+                )
+
+                Spacer(Modifier.height(9.dp))
+
 
                 OutlinedTextField(
                     value = odometer,
@@ -272,78 +354,6 @@ fun ManualEntryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp)
                 )
-
-                Spacer(Modifier.height(24.dp))
-
-                Text(
-                    text = "Select Gas Station",
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 19.sp),
-                )
-
-                Spacer(Modifier.height(9.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedCard(
-                        onClick = { /* add in the future */ },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(90.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Map",
-                                modifier = Modifier.size(35.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "Choose on map",
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-
-                    OutlinedCard(
-                        onClick = { /* add in the future */ },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(90.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = "Favorite",
-                                modifier = Modifier.size(35.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "Favorite",
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 

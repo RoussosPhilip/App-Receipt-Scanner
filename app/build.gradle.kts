@@ -65,4 +65,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("com.mapbox.maps:android:11.1.0")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+    implementation("com.mapbox.maps:android:11.17.1")
+    implementation("com.mapbox.extension:maps-compose:11.17.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }

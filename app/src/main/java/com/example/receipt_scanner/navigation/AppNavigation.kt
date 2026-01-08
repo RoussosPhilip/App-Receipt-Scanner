@@ -13,6 +13,8 @@ import com.example.receipt_scanner.ui.screens.HistoryScreen
 import com.example.receipt_scanner.ui.screens.ManualEntryScreen
 import com.example.receipt_scanner.ui.screens.RecordDetailScreen
 import com.example.receipt_scanner.ui.screens.ScannerScreen
+import com.example.receipt_scanner.ui.screens.FavoritesStationScreen
+import com.example.receipt_scanner.ui.screens.MapScreen
 
 @Composable
 fun AppNavigation() {
@@ -51,6 +53,14 @@ fun AppNavigation() {
                 onSaveReceipt = { stationName, date, liters, amount ->
                     println("Saved: $stationName, $date, $liters, $amount")
                     navController.popBackStack()
+                },
+
+                onNavigateToFavoritesStation = {
+                    navController.navigate("favorites_station")
+                },
+
+                onNavigateToMap = {
+                    navController.navigate("map")
                 }
             )
         }
@@ -85,6 +95,20 @@ fun AppNavigation() {
                 onNavigateBack = { navController.popBackStack() }
             )
         }
+
+
+        composable("favorites_station") {
+            FavoritesStationScreen(
+                onNavigateBack = {navController.popBackStack() }
+            )
+        }
+
+        composable("map") {
+            MapScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
 
     }
 }
