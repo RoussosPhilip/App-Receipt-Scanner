@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.receipt_scanner"
+    namespace = "com.devphilip.receipt_scanner"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.receipt_scanner"
+        applicationId = "com.devphilip.receipt_scanner"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
