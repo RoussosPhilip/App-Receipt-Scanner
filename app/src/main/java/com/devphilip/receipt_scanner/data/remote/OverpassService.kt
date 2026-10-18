@@ -7,13 +7,6 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.net.URLEncoder
 
-data class GasStation(
-    val lat: Double,
-    val lon: Double,
-    val brand: String?,
-    val fuelTypes: List<String> = emptyList()
-)
-
 suspend fun fetchGasStations(
     centerLat: Double,
     centerLon: Double,
@@ -62,13 +55,20 @@ suspend fun fetchGasStations(
 
             val brand = if (element.has("tags")) {
                 val tags = element.getJSONObject("tags")
-                tags.optString("brand", null)
+                tags.optString("brand", "").ifEmpty { "Unknown" }
             } else {
-                null
+                "Unknown"
             }
 
-            stations.add(GasStation(lat, lon, brand))
-            println("⛽ Station: lat=$lat, lon=$lon, brand=$brand")  // Debug
+            stations.add(
+                GasStation(
+                    brand     = brand,
+                    lat       = lat,
+                    lon       = lon,
+                    address   = "",
+                    fuelTypes = emptyList()
+                )
+            )
         }
 
         println("✓ Found ${stations.size} gas stations")

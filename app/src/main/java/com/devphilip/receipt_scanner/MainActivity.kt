@@ -20,15 +20,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-//@Preview(
-//    showBackground = true,
-//    showSystemUi = true,
-//    name = "Preview")
-//@Composable
-//fun GreetingPreview() {
-//    Receipt_scannerTheme {
-//        Greeting("Android")
-//    }
-//}

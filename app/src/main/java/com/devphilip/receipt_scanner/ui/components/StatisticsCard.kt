@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,8 +48,9 @@ fun StatisticsCard(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.background
-                    ),
+                    color = MaterialTheme.colorScheme.background,
+                    lineHeight = 34.sp
+                ),
                 modifier = Modifier.padding(top = 6.dp)
             )
 

@@ -10,20 +10,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.devphilip.receipt_scanner.data.AppDataBase
+import com.devphilip.receipt_scanner.data.StationsRepository
 import com.devphilip.receipt_scanner.ui.components.ChevronLeft
 import com.devphilip.receipt_scanner.ui.components.GasStationInfoBottomSheet
 import com.devphilip.receipt_scanner.data.remote.GasStation
-import com.devphilip.receipt_scanner.data.remote.fetchGasStations
 import com.devphilip.receipt_scanner.data.remote.getGasStationLogo
 import com.devphilip.receipt_scanner.data.remote.loadBitmapFromAssets
 import com.google.android.gms.location.LocationServices
@@ -41,7 +44,9 @@ import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mapbox.maps.viewannotation.geometry
 import kotlinx.coroutines.launch
-
+import com.devphilip.receipt_scanner.data.FavoriteStation
+import androidx.compose.runtime.collectAsState
+import com.devphilip.receipt_scanner.data.StationsDataBase
 
 @Composable
 fun MapScreen(
@@ -64,6 +69,15 @@ fun MapScreen(
     var gasStations by remember { mutableStateOf<List<GasStation>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var selectedStation by remember { mutableStateOf<GasStation?>(null) }
+
+    val favoriteDao = remember { AppDataBase.getDataBase(context).favoriteStationDao() }
+
+    val isFavorite by remember(selectedStation) {
+        selectedStation?.let {
+            favoriteDao.isFavorite(it.stationGUID)
+        } ?: kotlinx.coroutines.flow.flowOf(false)
+    }.collectAsState(initial = false)
+
 
     var hasLocationPermission by remember {
         mutableStateOf(
@@ -115,7 +129,10 @@ fun MapScreen(
                         )
 
                         scope.launch {
-                            gasStations = fetchGasStations(it.latitude, it.longitude)
+                            val repository = StationsRepository(
+                                dao = StationsDataBase.getDataBase(context).stationsDao()
+                            )
+                            gasStations = repository.getNearbyStations(it.latitude, it.longitude)
                             isLoading = false
                         }
                     } ?: run {
@@ -186,12 +203,20 @@ fun MapScreen(
                                     .clickable { selectedStation = station },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Image(
-                                    bitmap = bmp.asImageBitmap(),
-                                    contentDescription = station.brand ?: "Gas Station",
-                                    modifier = Modifier.size(25.dp),
-                                    contentScale = ContentScale.Fit
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(26.dp)
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .background(Color.White),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Image(
+                                        bitmap = bmp.asImageBitmap(),
+                                        contentDescription = station.brand,
+                                        modifier = Modifier.size(20.dp),
+                                        contentScale = ContentScale.Inside
+                                    )
+                                }
                             }
                         } ?: run {
                             Box(
@@ -205,13 +230,31 @@ fun MapScreen(
                 }
             }
 
-            // Bottom Sheet Component
             GasStationInfoBottomSheet(
-                stationName = selectedStation?.brand ?: "Unknown Station",
-                fuelTypes = selectedStation?.fuelTypes ?: emptyList(),
-                showSheet = selectedStation != null,
-                onDismiss = { selectedStation = null },
-                onFuelSelected = { fuelType ->
+                stationName     = selectedStation?.owner ?: "Unknown Station",
+                fuelTypes       = selectedStation?.fuelTypes ?: emptyList(),
+                showSheet       = selectedStation != null,
+                isFavorite      = isFavorite,
+                onToggleFavorite = {
+                    selectedStation?.let { station ->
+                        scope.launch {
+                            if (isFavorite) {
+                                favoriteDao.delete(station.stationGUID)
+                            } else {
+                                favoriteDao.insert(
+                                    FavoriteStation(
+                                        stationGUID = station.stationGUID,
+                                        brand       = station.brand,
+                                        owner       = station.owner,
+                                        address     = station.address
+                                    )
+                                )
+                            }
+                        }
+                    }
+                },
+                onDismiss       = { selectedStation = null },
+                onFuelSelected  = { fuelType ->
                     selectedStation?.let { station ->
                         onStationSelected(station, fuelType)
                     }

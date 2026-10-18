@@ -81,7 +81,7 @@ fun HistoryScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(20.dp)
+                    .padding(12.dp)
             ) {
 //                Spacer(modifier = Modifier.height(20.dp))
 

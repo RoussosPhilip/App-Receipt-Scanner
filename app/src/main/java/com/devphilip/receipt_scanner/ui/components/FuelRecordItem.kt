@@ -1,5 +1,6 @@
 package com.devphilip.receipt_scanner.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,9 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.devphilip.receipt_scanner.data.FuelRecord
+import com.devphilip.receipt_scanner.data.remote.getGasStationLogo
+import com.devphilip.receipt_scanner.data.remote.loadBitmapFromAssets
+import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -39,6 +46,13 @@ fun FuelRecordItem(
 
     val shape = RoundedCornerShape(16.dp)
 
+    val context = LocalContext.current
+
+    val logoBitmap = remember(record.stationBrand) {
+        val fileName = getGasStationLogo(record.stationBrand)
+        loadBitmapFromAssets(context, fileName)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,23 +74,39 @@ fun FuelRecordItem(
                 modifier = Modifier
                     .size(48.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = Color(0xFFFFFFFF),
                         shape = RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center
 
             ) {
-                // gas station icon
+                logoBitmap?.let { bitmap ->
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = record.stationBrand,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = record.stationName,
+                    text = record.stationBrand,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
+
+//                Text(
+//                    text = record.stationName,
+//                    style = MaterialTheme.typography.labelMedium,
+//                    fontWeight = FontWeight.Bold
+//                )
 
                 Text(
                     text = "$displayDate • ${record.time} • ${record.liters} L",

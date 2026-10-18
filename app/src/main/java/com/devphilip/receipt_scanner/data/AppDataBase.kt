@@ -5,25 +5,29 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [FuelRecord::class], version = 2, exportSchema = false)
-abstract class AppDataBase : RoomDatabase(){
-
+@Database(
+    entities = [FuelRecord::class, FavoriteStation::class],
+    version = 2,
+    exportSchema = false
+)
+abstract class AppDataBase : RoomDatabase() {
     abstract fun fuelRecordDao(): FuelRecordDao
+    abstract fun favoriteStationDao(): FavoriteStationDao
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: AppDataBase? = null
 
-        fun getDataBase(context: Context): AppDataBase{
-            return INSTANCE ?: synchronized(this){
-                val instance = Room.databaseBuilder(
+        fun getDataBase(context: Context): AppDataBase =
+            INSTANCE ?: synchronized(this) {
+                Room.databaseBuilder(
                     context.applicationContext,
                     AppDataBase::class.java,
-                    "fuel_records_database"
-                ).build()
-                INSTANCE = instance
-                instance
+                    "user_data.db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { INSTANCE = it }
             }
-        }
     }
 }

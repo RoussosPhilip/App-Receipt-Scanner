@@ -35,7 +35,6 @@ fun ChevronLeft(
     ) {
         val strokeWidth = 2.5.dp.toPx()
 
-        // Top line
         drawLine(
             color = color,
             start = Offset(
@@ -50,7 +49,6 @@ fun ChevronLeft(
             cap = StrokeCap.Round
         )
 
-        // Bottom line
         drawLine(
             color = color,
             start = Offset(
